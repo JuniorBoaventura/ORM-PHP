@@ -9,11 +9,14 @@ class QueryBuilder
   private $select;
   private $from;
   private $where = [];
-  public $query;
+  private $query;
+  private $class;
 
 
-  function __construct()
+
+  function __construct($class)
   {
+    $this->class = $class;
     $this->connexion = OrmConfig::getConnection();
   }
 
@@ -57,8 +60,6 @@ class QueryBuilder
 
     }
 
-    var_dump($condition);
-
     return $condition;
   }
 
@@ -76,7 +77,21 @@ class QueryBuilder
 
   public function _fetchAll()
   {
-    return $this->query->fetchAll(\PDO::FETCH_ASSOC);
+    $res = $this->query->fetchAll(\PDO::FETCH_ASSOC);
+    return $this->_hydration($res);
+  }
+
+  public function _hydration($res){
+    $array = [];
+    foreach ($res as $object) {
+      $row = new $this->class();
+      foreach ($object as $key => $value) {
+        $method = 'set'.ucfirst($key);
+        $row->$method($value);
+      }
+      array_push($array, $row);
+    }
+    return $array;
   }
 
 }

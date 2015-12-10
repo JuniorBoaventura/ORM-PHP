@@ -14,16 +14,19 @@ class Table
 
   public function getAll()
   {
-      $req = new QueryBuilder();
-      $res = $req->_select()
-        ->_from($this->table)
-        ->_where(['firstname'=>'junior'])
-        ->_where(['age'=>21])
-        ->_execute()
-        ->_fetchAll();
+      $req= $this->query();
+      $res = $req
+      ->_select()
+      ->_execute()
+      ->_fetchAll();
       // var_dump($req->query);
 
       var_dump($res);
+  }
+
+  public function query(){
+    $req = new QueryBuilder($this->class);
+    return $req->_from($this->table);
   }
 
 }
