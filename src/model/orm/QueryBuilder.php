@@ -31,31 +31,33 @@ class QueryBuilder
 
   public function _where($condition)
   {
-    if(!empty($condition))
-      array_push($this->where, $condition);
-      return $this;
+    if(!empty($condition)){
+      foreach ($condition as $key => $value) {
+        $this->where[$key] = $value;
+      }
+    }
+    return $this;
   }
 
   public function _buildWhere()
   {
-    $array =$this->where;
-    $rowNb = count($this->where);
-    $condition =' WHERE ';
+    $array     = $this->where;
+    $rowNb     = count($this->where);
+    $condition = ' WHERE ';
+    $i         = 1;
 
-    for ($i=0; $i < $rowNb ; $i++) {
+    foreach ($array as $key => $value) {
 
-      $key   = key($array[$i]);
-      $value = $array[$i][$key];
+      $condition .= $key.' = :'.$key;
 
-      if(is_string($value))
-        $condition .= $key.' = "'.$value.'"';
-      else
-        $condition .= $key.' = '.$value;
-
-      if($i < $rowNb-1)
+      if($i < $rowNb){
         $condition .= ' AND ';
+        $i++;
+      }
 
     }
+
+    var_dump($condition);
 
     return $condition;
   }
@@ -68,7 +70,7 @@ class QueryBuilder
     $sql = 'SELECT '.$this->select.' FROM '.$this->from.$where;
 
     $this->query = $this->connexion->prepare($sql);
-    $this->query->execute();
+    $this->query->execute($this->where);
     return $this;
   }
 
