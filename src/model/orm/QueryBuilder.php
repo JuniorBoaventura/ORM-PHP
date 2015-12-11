@@ -11,6 +11,7 @@ class QueryBuilder
   private $where = [];
   private $query;
   private $class;
+  private $action = ['INSERT','UPDATE'];
 
 
 
@@ -42,9 +43,10 @@ class QueryBuilder
     return $this;
   }
 
-  public function _buildWhere()
+  public function _buildWhere($array = null)
   {
     $array     = $this->where;
+
     $rowNb     = count($this->where);
     $condition = ' WHERE ';
     $i         = 1;
@@ -59,7 +61,6 @@ class QueryBuilder
       }
 
     }
-
     return $condition;
   }
 
@@ -89,9 +90,53 @@ class QueryBuilder
         $method = 'set'.ucfirst($key);
         $row->$method($value);
       }
+      $row->setUpdate(true);
       array_push($array, $row);
     }
     return $array;
+  }
+
+  public function _persist($array){
+    $update    = $array['_update'];
+    $row       = $this->preg_grep_keys('/^((?!_).)*$/',$array);
+    $fieldname = '';
+    $data      = '';
+
+    if($update === false){
+      // if $update is set at FALSE => INSERT
+      foreach ($row as $key => $value) {
+        $fieldname .= $key.', ';
+        $data      .= ':'.$key.', ';
+      }
+      $fieldname = rtrim($fieldname, ', ');
+      $data      = rtrim($data, ', ');
+      $sql       = 'INSERT INTO '.$this->from.' ('.$fieldname.') VALUE ('.$data.')';
+    }else{
+      // if $update is set at TRUE => UPDATE
+      foreach ($row as $key => $value) {
+        $fieldname .= $key.', ';
+        $data      .= $key.'=:'.$key.', ';
+      }
+
+      if($row['id']){
+        $where = ' WHERE id = :id';
+      }else{
+        $this->where = $row;
+        $where       = $this->_buildWhere();
+      }
+
+      $fieldname = rtrim($fieldname, ', ');
+      $data      = rtrim($data, ', ');
+      $sql       = 'UPDATE '.$this->from.' SET '.$data.$where;
+
+    }
+
+    $this->query = $this->connexion->prepare($sql);
+    $res         = $this->query->execute($row);
+  }
+
+  public function preg_grep_keys($pattern, $input, $flags = 0) {
+    return array_intersect_key($input, array_flip(preg_grep($pattern, array_keys($input), $flags)));
   }
 
 }
