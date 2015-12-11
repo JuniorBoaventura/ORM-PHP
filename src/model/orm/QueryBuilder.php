@@ -52,15 +52,11 @@ class QueryBuilder
     $i         = 1;
 
     foreach ($array as $key => $value) {
-
       $condition .= $key.' = :'.$key;
-
-      if($i < $rowNb){
-        $condition .= ' AND ';
-        $i++;
-      }
-
+      $condition .= ' AND ';
     }
+
+    $condition = rtrim($condition, ' AND ');
     return $condition;
   }
 
