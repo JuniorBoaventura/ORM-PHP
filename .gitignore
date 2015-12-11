@@ -21,6 +21,11 @@
 *.tar
 *.zip
 
+
+# files #
+########
+*.pdf
+
 # Logs and databases #
 ######################
 *.log
