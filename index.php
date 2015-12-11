@@ -15,5 +15,16 @@ try{
   echo $e->getMessage();
 }
 
-$users = new User();
-var_dump($users->getAll());
+
+// Create or update a user
+$user1 = new User();
+$user1->setId(6);
+$user1->setName('Wenger');
+$user1->SetFirstname('Killian');
+$user1->SetAge(21);
+$user1->SetStatus(1);
+$user1->save();
+
+// Get all users
+$user2 = new User();
+// var_dump($user2->getAll());
