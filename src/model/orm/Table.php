@@ -6,7 +6,8 @@ namespace src\model\orm;
 class Table
 {
   private $_class;
-  private $_update = true;
+  private $_update  = false;
+  private $_initial = null;
 
   function __construct()
   {
@@ -28,16 +29,6 @@ class Table
     return $req->_from($this->_table);
   }
 
-  public function setUpdate($value)
-  {
-    $this->update = $value;
-  }
-
-  public function getUpdate()
-  {
-    return $this->id;
-  }
-
   public function save()
   {
     return $this->persit();
@@ -47,6 +38,32 @@ class Table
   {
     $req = $this->query();
     return $req->_persist(get_object_vars ($this));
+  }
+
+  public function delete()
+  {
+    $req = $this->query();
+    return $req->_delete(get_object_vars ($this));
+  }
+
+  public function setUpdate($value)
+  {
+    $this->_update = $value;
+  }
+
+  public function getUpdate()
+  {
+    return $this->_update;
+  }
+
+  public function setInitial($array)
+  {
+    $this->_initial = $array;
+  }
+
+  public function getInitial()
+  {
+    return $this->_initial;
   }
 
 }

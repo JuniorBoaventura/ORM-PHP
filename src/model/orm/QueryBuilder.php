@@ -13,8 +13,6 @@ class QueryBuilder
   private $class;
   private $action = ['INSERT','UPDATE'];
 
-
-
   function __construct($class)
   {
     $this->class = $class;
@@ -43,16 +41,51 @@ class QueryBuilder
     return $this;
   }
 
+  public function getWhere($row)
+  {
+    // var_dump($row);
+    if(isset($row['id']) && $row['id'] !== null){
+      echo "ok";
+      $where = ' WHERE id = :id';
+      $row = ['id'=>$row['id']];
+    }else{
+      echo "pas ok";
+      unset($row['id']);
+      $this->where = $row;
+      $where       = $this->_buildWhere();
+
+      if(isset($row['_update'])){
+        unset($row['_update']);
+        foreach ($row as $key => $value) {
+          $row['old'.ucfirst($key)] = $row[$key];
+          unset($row[$key]);
+        }
+      }
+
+    }
+
+    return ['sql'=>$where, 'data'=>$row];
+  }
+
   public function _buildWhere($array = null)
   {
     $array     = $this->where;
 
-    $rowNb     = count($this->where);
+    if(isset($array['_update'])){
+      $update = $array['_update'];
+      unset($array['_update']);
+    }
+
+    // var_dump($update);
     $condition = ' WHERE ';
-    $i         = 1;
 
     foreach ($array as $key => $value) {
-      $condition .= $key.' = :'.$key;
+      // if update is true add the label old
+      if(isset($update))
+        $condition .= $key.' = :old'.ucfirst($key);
+      else
+        $condition .= $key.' = :'.$key;
+
       $condition .= ' AND ';
     }
 
@@ -63,7 +96,6 @@ class QueryBuilder
   public function _execute()
   {
     $where = (!empty($this->where)) ? $this->_buildWhere() : '';
-
 
     $sql = 'SELECT '.$this->select.' FROM '.$this->from.$where;
 
@@ -87,19 +119,21 @@ class QueryBuilder
         $row->$method($value);
       }
       $row->setUpdate(true);
+      $row->setInitial(get_object_vars ($row));
       array_push($array, $row);
     }
     return $array;
   }
 
   public function _persist($array){
-    $update    = $array['_update'];
-    $row       = $this->preg_grep_keys('/^((?!_).)*$/',$array);
+    $initial   = $array['_initial'];
+    $row       = $this->formatArray($array);
+
     $fieldname = '';
     $data      = '';
 
-    if($update === false){
-      // if $update is set at FALSE => INSERT
+    if($initial === null){
+      // if $initial is set at FALSE => INSERT
       foreach ($row as $key => $value) {
         $fieldname .= $key.', ';
         $data      .= ':'.$key.', ';
@@ -108,27 +142,43 @@ class QueryBuilder
       $data      = rtrim($data, ', ');
       $sql       = 'INSERT INTO '.$this->from.' ('.$fieldname.') VALUE ('.$data.')';
     }else{
-      // if $update is set at TRUE => UPDATE
+      // if $initial is set at TRUE => UPDATE
       foreach ($row as $key => $value) {
-        $fieldname .= $key.', ';
-        $data      .= $key.'=:'.$key.', ';
+        if($value !== null){
+          $fieldname .= $key.', ';
+          $data      .= $key.'=:'.$key.', ';
+        }
       }
 
-      if($row['id']){
-        $where = ' WHERE id = :id';
-      }else{
-        $this->where = $row;
-        $where       = $this->_buildWhere();
-      }
+      $where     = $this->getWhere($initial);
 
       $fieldname = rtrim($fieldname, ', ');
       $data      = rtrim($data, ', ');
-      $sql       = 'UPDATE '.$this->from.' SET '.$data.$where;
+      $sql       = 'UPDATE '.$this->from.' SET '.$data.$where['sql'];
 
     }
 
+    if(!isset($row['id']))
+      $row = array_merge($row, $where['data']);
+
     $this->query = $this->connexion->prepare($sql);
-    $res         = $this->query->execute($row);
+
+  return $this->query->execute($row);
+  }
+
+  public function _delete($array)
+  {
+    $row         = $this->formatArray($array);
+    $where       = $this->getWhere($row);
+
+    $sql         = "DELETE FROM ".$this->from.$where['sql'];
+
+    $this->query = $this->connexion->prepare($sql);
+    return $this->query->execute($where['data']);
+  }
+
+  public function formatArray($array){
+    return $this->preg_grep_keys('/^((?!_).)*$/',$array);
   }
 
   public function preg_grep_keys($pattern, $input, $flags = 0) {

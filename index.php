@@ -15,16 +15,37 @@ try{
   echo $e->getMessage();
 }
 
+$user = new User();
+$all = $user->getAll();
 
-// Create or update a user
-$user1 = new User();
-$user1->setId(6);
-$user1->setName('Wenger');
-$user1->SetFirstname('Killian');
-$user1->SetAge(21);
-$user1->SetStatus(1);
-$user1->save();
+$junior = $all[0];
+
+var_dump($junior);
+
+// $junior->setAge(22);
+// // $junior->setName('Boaventuraa');
+// $junior->setId(null);
+// $junior->delete();
+
+// Create a User
+// $user1 = new User();
+// $user1->setId(11);
+// $user1->setName('Wenger');
+// $user1->SetFirstname('Killian');
+// $user1->SetAge(22);
+// $user1->SetStatus(1);
+// var_dump($user1->save());
+
+// $user2 = new User();
+// $user2->setId(6);
+// $user2->setName('Enrico');
+// $user2->SetFirstname('Robin');
+// $user2->SetAge(22);
+// $user2->SetStatus(2);
+// $user2->setUpdate(true);
 
 // Get all users
-$user2 = new User();
-// var_dump($user2->getAll());
+$user3 = new User();
+
+// Delete a User
+// $user1->delete();
