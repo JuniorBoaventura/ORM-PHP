@@ -75,6 +75,16 @@ class Table
     return (int) $res[0]['nb'];
   }
 
+  public function exist($id)
+  {
+    $nb = $this->count(['id'=>$id]);
+
+    if($nb !==1)
+      return false;
+
+    return true;
+  }
+
   public function setUpdate($value)
   {
     $this->_update = $value;

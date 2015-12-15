@@ -18,8 +18,10 @@ try{
 
 $user = new User();
 
-$nb = $user->count(['name']);
-var_dump($nb);
+// $nb = $user->count(['name']);
+// var_dump($nb);
+
+var_dump($user->exist(2));
 // $all = $user->getAll();
 // var_dump($all);
 
