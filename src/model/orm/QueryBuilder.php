@@ -100,7 +100,12 @@ class QueryBuilder
     $sql = 'SELECT '.$this->select.' FROM '.$this->from.$where['sql'];
 
     $this->query = $this->connexion->prepare($sql);
-    $this->query->execute($where['data']);
+    $res = $this->query->execute($where['data']);
+
+    if (!$res)
+      Log::error($this->query->errorInfo(), $this->query->queryString);
+    Log::access($this->query->queryString);
+
     return $this;
   }
 

@@ -6,6 +6,7 @@ require_once('autoload.php');
 use src\model\orm\OrmConfig;
 use src\model\orm\Table;
 use src\model\orm\User;
+use src\model\orm\Log;
 
 // Get the config database
 $config_db = json_decode(file_get_contents('app/config/config_db.json'), true);
@@ -17,7 +18,7 @@ try{
 
 $user = new User();
 
-$nb = $user->count();
+$nb = $user->count(['name']);
 var_dump($nb);
 // $all = $user->getAll();
 // var_dump($all);

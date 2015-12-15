@@ -1,6 +1,6 @@
 #      Directory      #
 #######################
-
+src/model/orm/Entity/*
 #   Compiled source   #
 #######################
 *.com
@@ -25,6 +25,7 @@
 # files #
 ########
 *.pdf
+*.log
 
 # Logs and databases #
 ######################
