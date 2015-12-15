@@ -11,7 +11,7 @@ class QueryBuilder
   private $where = [];
   private $query;
   private $class;
-  private $action = ['INSERT','UPDATE'];
+  private $count = false;
 
   function __construct($class)
   {
@@ -43,13 +43,10 @@ class QueryBuilder
 
   public function getWhere($row)
   {
-    // var_dump($row);
     if(isset($row['id']) && $row['id'] !== null){
-      echo "ok";
       $where = ' WHERE id = :id';
-      $row = ['id'=>$row['id']];
+      $row   = ['id'=>$row['id']];
     }else{
-      echo "pas ok";
       unset($row['id']);
       $this->where = $row;
       $where       = $this->_buildWhere();
@@ -76,7 +73,6 @@ class QueryBuilder
       unset($array['_update']);
     }
 
-    // var_dump($update);
     $condition = ' WHERE ';
 
     foreach ($array as $key => $value) {
@@ -95,19 +91,26 @@ class QueryBuilder
 
   public function _execute()
   {
-    $where = (!empty($this->where)) ? $this->_buildWhere() : '';
 
-    $sql = 'SELECT '.$this->select.' FROM '.$this->from.$where;
+    $where = !empty($this->where) ? $this->getWhere($this->where) : ['sql'=>'', 'data'=>[]];
+
+    if($this->count)
+      $this->select = 'COUNT(*) as nb';
+
+    $sql = 'SELECT '.$this->select.' FROM '.$this->from.$where['sql'];
 
     $this->query = $this->connexion->prepare($sql);
-    $this->query->execute($this->where);
+    $this->query->execute($where['data']);
     return $this;
   }
 
-  public function _fetchAll()
+  public function _fetchAll($hydration = true)
   {
     $res = $this->query->fetchAll(\PDO::FETCH_ASSOC);
-    return $this->_hydration($res);
+    unset($res['_query']);
+    if($hydration)
+      return $this->_hydration($res);
+    return $res;
   }
 
   public function _hydration($res){
@@ -161,8 +164,8 @@ class QueryBuilder
     if(!isset($row['id']))
       $row = array_merge($row, $where['data']);
 
-    $this->query = $this->connexion->prepare($sql);
-
+  $this->query = $this->connexion->prepare($sql);
+  ### Modification !! Return the last insert id or the updated row ###
   return $this->query->execute($row);
   }
 
@@ -172,9 +175,15 @@ class QueryBuilder
     $where       = $this->getWhere($row);
 
     $sql         = "DELETE FROM ".$this->from.$where['sql'];
-
+    ### Modification !! Return the rows deleted ###
     $this->query = $this->connexion->prepare($sql);
     return $this->query->execute($where['data']);
+  }
+
+  public function _count()
+  {
+    $this->count = true;
+    return $this;
   }
 
   public function formatArray($array){

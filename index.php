@@ -16,11 +16,26 @@ try{
 }
 
 $user = new User();
-$all = $user->getAll();
 
-$junior = $all[0];
+$nb = $user->count();
+var_dump($nb);
+// $all = $user->getAll();
+// var_dump($all);
 
-var_dump($junior);
+// $morgan = $all[0];
+//
+// $morgan->setName('Olsen');
+// $morgan->save();
+//
+// var_dump($morgan->getName());
+//
+// $raph->setId(null);
+// var_dump($raph);
+// $raph->delete();
+//
+// $junior = $all[0];
+//
+// var_dump($junior);
 
 // $junior->setAge(22);
 // // $junior->setName('Boaventuraa');
@@ -45,7 +60,7 @@ var_dump($junior);
 // $user2->setUpdate(true);
 
 // Get all users
-$user3 = new User();
+// $user3 = new User();
 
 // Delete a User
 // $user1->delete();

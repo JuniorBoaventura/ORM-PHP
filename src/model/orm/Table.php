@@ -40,10 +40,39 @@ class Table
     return $req->_persist(get_object_vars ($this));
   }
 
+  public function getBy($array)
+  {
+    $req = $this->query();
+
+  }
+
+  public function getById($id)
+  {
+    $req = $this->query();
+
+  }
+
   public function delete()
   {
     $req = $this->query();
     return $req->_delete(get_object_vars ($this));
+  }
+
+  public function count($column = null, $value = null)
+  {
+    if(is_array($column))
+      $where = $column;
+    elseif (is_string($column) && is_string($value))
+      $where = [$column => $value ];
+    else
+      $where = [];
+
+    $req = $this->query();
+    $req->_count()
+    ->_where($where)
+    ->_execute();
+    $res = $req->_fetchAll(false);
+    return (int) $res[0]['nb'];
   }
 
   public function setUpdate($value)
