@@ -12,6 +12,7 @@ class QueryBuilder
   private $query;
   private $class;
   private $count = false;
+  private $join;
 
   function __construct($class)
   {
@@ -99,8 +100,11 @@ class QueryBuilder
 
     $sql = 'SELECT '.$this->select.' FROM '.$this->from.$where['sql'];
 
+
     $this->query = $this->connexion->prepare($sql);
     $res = $this->query->execute($where['data']);
+
+
 
     if (!$res)
       Log::error($this->query->errorInfo(), $this->query->queryString);
@@ -120,6 +124,7 @@ class QueryBuilder
 
   public function _hydration($res){
     $array = [];
+
     foreach ($res as $object) {
       $row = new $this->class();
       foreach ($object as $key => $value) {
@@ -189,6 +194,13 @@ class QueryBuilder
   {
     $this->count = true;
     return $this;
+  }
+
+  public function _join($class)
+  {
+      $this->join = true;
+      $this->class = $class;
+      return $this;
   }
 
   public function formatArray($array){

@@ -8,6 +8,7 @@ class Table
   private $_class;
   private $_update  = false;
   private $_initial = null;
+  public $join;
 
   function __construct()
   {
@@ -23,10 +24,13 @@ class Table
       ->_fetchAll();
   }
 
-  public function query()
+  public function query($table = null)
   {
+    if($table === null)
+      $table = $this->_table;
+
     $req = new QueryBuilder($this->_class);
-    return $req->_from($this->_table);
+    return $req->_from($table);
   }
 
   public function save()
@@ -83,6 +87,24 @@ class Table
       return false;
 
     return true;
+  }
+
+  public function join($joinTable){
+    $req = $this->query($joinTable);
+
+    $id = (int)$this->id;
+    $table = $this->_table.'_id';
+
+    $namespace = 'src\model\orm\Entity\\'.ucfirst($joinTable);
+
+    $this->join = $req
+    ->_select()
+    ->_join($namespace)
+    ->_where([$table => $id])
+    ->_execute()
+    ->_fetchAll();
+
+
   }
 
   public function setUpdate($value)

@@ -5,8 +5,9 @@ require_once('autoload.php');
 // Classes
 use src\model\orm\OrmConfig;
 use src\model\orm\Table;
-use src\model\orm\User;
 use src\model\orm\Log;
+
+use src\model\orm\Entity\Users;
 
 // Get the config database
 $config_db = json_decode(file_get_contents('app/config/config_db.json'), true);
@@ -16,16 +17,26 @@ try{
   echo $e->getMessage();
 }
 
-$user = new User();
+$user = new Users();
+// var_dump($user->getAll());
+
+// $toto = $user->join('messages');
+//
+// var_dump($toto);
+
 
 // $nb = $user->count(['name']);
 // var_dump($nb);
 
-var_dump($user->exist(2));
-// $all = $user->getAll();
+// var_dump($user->exist(2));
+$all = $user->getAll();
 // var_dump($all);
 
-// $morgan = $all[0];
+$morgan = $all[0];
+$morgan->join('messages');
+
+var_dump($morgan);
+
 //
 // $morgan->setName('Olsen');
 // $morgan->save();

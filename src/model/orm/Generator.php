@@ -26,13 +26,16 @@ class Generator
 
     $code = "<?php\n\n";
     $code .= "namespace src\model\orm\Entity;\n\n";
-    $code .= "class ".ucfirst($this->table)."\n{\n";
+    $code .= "use src\model\orm\Table;\n\n";
+    $code .= "class ".ucfirst($this->table)." extends table \n{\n";
 
     foreach ($columns as $column){
       $code .= $this->tabs($this->space) . 'protected $'.$column.";\n";
     }
 
     $code .= "\n";
+    $code .= $this->tabs($this->space)."protected \$_table = '".$this->table."';";
+    $code .= "\n\n";
 
     foreach ($columns as $column){
       $code .= $this->tabs($this->space) . 'public function get'.ucfirst($column)."()\n";
