@@ -12,7 +12,7 @@ class QueryBuilder
   private $query;
   private $class;
   private $count = false;
-  private $join;
+  private $join = false;
 
   function __construct($class)
   {
@@ -116,7 +116,7 @@ class QueryBuilder
   public function _fetchAll($hydration = true)
   {
     $res = $this->query->fetchAll(\PDO::FETCH_ASSOC);
-    unset($res['_query']);
+
     if($hydration)
       return $this->_hydration($res);
     return $res;
@@ -127,20 +127,25 @@ class QueryBuilder
 
     foreach ($res as $object) {
       $row = new $this->class();
+
       foreach ($object as $key => $value) {
         $method = 'set'.ucfirst($key);
         $row->$method($value);
       }
       $row->setUpdate(true);
-      $row->setInitial(get_object_vars ($row));
+      $row->setInitial($object);
       array_push($array, $row);
     }
     return $array;
   }
 
   public function _persist($array){
+
     $initial   = $array['_initial'];
+
     $row       = $this->formatArray($array);
+    unset($array['_join']);
+
 
     $fieldname = '';
     $data      = '';
@@ -171,8 +176,8 @@ class QueryBuilder
 
     }
 
-    if(!isset($row['id']))
-      $row = array_merge($row, $where['data']);
+  if($row['id'] !== null)
+    $row = array_merge($row, $where['data']);
 
   $this->query = $this->connexion->prepare($sql);
   ### Modification !! Return the last insert id or the updated row ###
