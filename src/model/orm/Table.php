@@ -8,7 +8,7 @@ class Table
   private $_class;
   private $_update  = false;
   private $_initial = null;
-  public $join;
+  public $_join     = [];
 
   function __construct()
   {
@@ -97,13 +97,13 @@ class Table
 
     $namespace = 'src\model\orm\Entity\\'.ucfirst($joinTable);
 
-    $this->join = $req
+    $res = $req
     ->_select()
     ->_join($namespace)
     ->_where([$table => $id])
     ->_execute()
     ->_fetchAll();
-
+    $this->_join[$joinTable] = $res;
 
   }
 
