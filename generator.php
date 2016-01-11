@@ -4,11 +4,11 @@ require_once('autoload.php');
 use src\model\orm\OrmConfig;
 use src\model\orm\Generator;
 
-$table = $argv[1];
-$table = rtrim($table, "\n");
+$tableName = $argv[1];
+$tableName = rtrim($tableName, "\n");
 
 
-$generator = new Generator($table);
+$generator = new Generator($tableName);
 $res = $generator->generateEntity();
 
 echo $res;

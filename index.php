@@ -8,6 +8,7 @@ use src\model\orm\Table;
 use src\model\orm\Log;
 
 use src\model\orm\Entity\Users;
+use src\model\orm\Entity\Messages;
 
 // Get the config database
 $config_db = json_decode(file_get_contents('app/config/config_db.json'), true);
@@ -17,64 +18,57 @@ try{
   echo $e->getMessage();
 }
 
-$user = new Users();
-// var_dump($user->getAll());
 
-// $toto = $user->join('messages');
-//
-// var_dump($toto);
-
-
-// $nb = $user->count(['name']);
-// var_dump($nb);
-
-// var_dump($user->exist(2));
-$all = $user->getAll();
-// var_dump($all);
-
-$morgan = $all[0];
-$morgan->join('messages');
-
-var_dump($morgan);
-
-//
-// $morgan->setName('Olsen');
-// $morgan->save();
-//
-// var_dump($morgan->getName());
-//
-// $raph->setId(null);
-// var_dump($raph);
-// $raph->delete();
-//
-// $junior = $all[0];
-//
-// var_dump($junior);
-
-// $junior->setAge(22);
-// // $junior->setName('Boaventuraa');
-// $junior->setId(null);
-// $junior->delete();
-
-// Create a User
-// $user1 = new User();
-// $user1->setId(11);
-// $user1->setName('Wenger');
-// $user1->SetFirstname('Killian');
-// $user1->SetAge(22);
-// $user1->SetStatus(1);
+// Create a user
+// - - - - -- - - - - - - - - - - - -
+$user1 = new Users();
+$user1->setName('Vermesch');
+$user1->SetFirstname('Killian');
+$user1->SetAge(18);
+$user1->SetStatus(0);
 // var_dump($user1->save());
 
-// $user2 = new User();
-// $user2->setId(6);
-// $user2->setName('Enrico');
-// $user2->SetFirstname('Robin');
-// $user2->SetAge(22);
-// $user2->SetStatus(2);
-// $user2->setUpdate(true);
 
 // Get all users
-// $user3 = new User();
+// - - - - -- - - - - - - - - - - - -
+$user2 = new Users();
+// $user2->delete();
+$users = $user2->getAll();
+// var_dump($user2->getAll($users ));
 
-// Delete a User
-// $user1->delete();
+// Update user
+// - - - - -- - - - - - - - - - - - -
+$morgan = $users[2];
+// $killian->SetName('Vermersch');
+// $killian->SetAge(25);
+// $killian->SetStatus(1);
+// $killian->save();
+
+// Is user exist ?
+// - - - - -- - - - - - - - - - - - -
+$user3 = new Users();
+// var_dump($user3->exist(16));
+
+
+// count all users
+// - - - - -- - - - - - - - - - - - -
+$user4 = new Users();
+// var_dump($user4->count());
+
+// count all users with condition
+// - - - - -- - - - - - - - - - - - -
+$user5 = new Users();
+// var_dump($user5->count(['name'=>'Boaventura', 'status'=>1]));
+
+// Join user to another table
+// - - - - -- - - - - - - - - - - - -
+$morgan->join('messages');
+var_dump($morgan->_join);
+// $messages = $morgan->join[0];
+// $messages->setContent('tutu');
+// $messages->save();
+
+
+// Delete user
+// - - - - -- - - - - - - - - - - - -
+// $morgan->delete();
