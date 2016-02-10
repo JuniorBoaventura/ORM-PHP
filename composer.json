@@ -7,5 +7,10 @@
             "email": "junior.boaventura1@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-0": {
+            "orm\\": "src\\model\\orm\\"
+        }
+    },
     "require": {}
 }
