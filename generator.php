@@ -1,5 +1,5 @@
 <?php
-require_once('autoload.php');
+require_once('vendor/autoload.php');
 
 use orm\OrmConfig;
 use orm\Generator;
