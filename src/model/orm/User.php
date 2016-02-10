@@ -1,5 +1,5 @@
 <?php
-namespace src\model\orm;
+namespace orm;
 /**
  *
  */

@@ -1,6 +1,6 @@
 <?php
 
-namespace src\model\orm;
+namespace orm;
 
 class Log{
 

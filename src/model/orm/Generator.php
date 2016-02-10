@@ -1,5 +1,5 @@
 <?php
-namespace src\model\orm;
+namespace orm;
 /**
  *
  */
@@ -25,8 +25,8 @@ class Generator
       return 'This table does not exist';
 
     $code = "<?php\n\n";
-    $code .= "namespace src\model\orm\Entity;\n\n";
-    $code .= "use src\model\orm\Table;\n\n";
+    $code .= "namespace orm\Entity;\n\n";
+    $code .= "use orm\Table;\n\n";
     $code .= "class ".ucfirst($this->table)." extends table \n{\n";
 
     foreach ($columns as $column){

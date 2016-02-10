@@ -1,8 +1,8 @@
 <?php
 require_once('autoload.php');
 
-use src\model\orm\OrmConfig;
-use src\model\orm\Generator;
+use orm\OrmConfig;
+use orm\Generator;
 
 $tableName = $argv[1];
 $tableName = rtrim($tableName, "\n");

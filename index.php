@@ -1,14 +1,14 @@
 <?php
 // Get the autoload
-require_once('autoload.php');
+require_once('vendor/autoload.php');
 
 // Classes
-use src\model\orm\OrmConfig;
-use src\model\orm\Table;
-use src\model\orm\Log;
+use orm\OrmConfig;
+use orm\Table;
+use orm\Log;
 
-use src\model\orm\Entity\Users;
-use src\model\orm\Entity\Messages;
+use orm\Entity\Users;
+use orm\Entity\Messages;
 
 // Get the config database
 $config_db = json_decode(file_get_contents('app/config/config_db.json'), true);

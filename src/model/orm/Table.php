@@ -1,5 +1,5 @@
 <?php
-namespace src\model\orm;
+namespace orm;
 /**
  *
  */
@@ -95,7 +95,7 @@ class Table
     $id = (int)$this->id;
     $table = $this->_table.'_id';
 
-    $namespace = 'src\model\orm\Entity\\'.ucfirst($joinTable);
+    $namespace = 'orm\Entity\\'.ucfirst($joinTable);
 
     $res = $req
     ->_select()
