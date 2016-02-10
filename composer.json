@@ -1,0 +1,11 @@
+{
+    "name": "sup/orm",
+    "description": "Light orm made to manage your MYSQL databases of your php project.",
+    "authors": [
+        {
+            "name": "JuniorBoaventura",
+            "email": "junior.boaventura1@gmail.com"
+        }
+    ],
+    "require": {}
+}
